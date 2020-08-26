@@ -92,6 +92,7 @@ class Roberta(BertPreTrainedModel):
     def __init__(self, config, weight=None):
 
         super(Roberta, self).__init__(config)
+        self.num_labels = config.num_labels
         self.roberta = RobertaModel(config)
         self.weight = weight
         self.classifier = nn.Sequential(nn.Dropout(config.hidden_dropout_prob),
