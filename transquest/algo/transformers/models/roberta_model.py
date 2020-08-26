@@ -81,3 +81,55 @@ class RobertaForSequenceClassification(BertPreTrainedModel):
             outputs = (loss,) + outputs
 
         return outputs  # (loss), logits, (hidden_states), (attentions)
+
+
+class Roberta(BertPreTrainedModel):
+
+    config_class = RobertaConfig
+    pretrained_model_archive_map = ROBERTA_PRETRAINED_MODEL_ARCHIVE_LIST
+    base_model_prefix = "roberta"
+
+    def __init__(self, config, weight=None):
+
+        super(Roberta, self).__init__(config)
+        self.roberta = RobertaModel(config)
+        self.weight = weight
+        self.classifier = nn.Sequential(nn.Dropout(config.hidden_dropout_prob),
+                                        nn.Linear(config.hidden_size, config.hidden_size),
+                                        nn.Tanh(),
+                                        nn.Dropout(config.hidden_dropout_prob),
+                                        nn.Linear(config.hidden_size, 1))
+
+    def forward(self,
+                input_ids=None,
+                attention_mask=None,
+                token_type_ids=None,
+                position_ids=None,
+                head_mask=None,
+                inputs_embeds=None,
+                labels=None
+                ):
+
+        outputs = self.roberta(
+            input_ids,
+            attention_mask=attention_mask,
+            token_type_ids=token_type_ids,
+            position_ids=position_ids,
+            head_mask=head_mask,
+        )
+
+        sequence_output = outputs[0]
+        classifiers = sequence_output[:, 0, :]
+        logits = self.classifier(classifiers)
+
+        outputs = (logits,) + outputs[2:]
+        if labels is not None:
+            #  We are doing regression
+            loss_fct = MSELoss()
+            loss = loss_fct(logits.view(-1), labels.view(-1))
+
+            outputs = (loss,) + outputs
+
+        return outputs
+
+

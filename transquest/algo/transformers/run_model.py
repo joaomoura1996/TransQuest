@@ -67,7 +67,7 @@ from transquest.algo.transformers.models.camembert_model import CamembertForSequ
 from transquest.algo.transformers.models.distilbert_model import DistilBertForSequenceClassification
 from transquest.algo.transformers.models.roberta_model import RobertaForSequenceClassification
 from transquest.algo.transformers.models.xlm_model import XLMForSequenceClassification
-from transquest.algo.transformers.models.xlm_roberta_model import XLMRobertaForSequenceClassification
+from transquest.algo.transformers.models.xlm_roberta_model import XLMRobertaForSequenceClassification, XLMRobertaModel
 from transquest.algo.transformers.models.xlnet_model import XLNetForSequenceClassification
 from transquest.algo.transformers.utils import LazyClassificationDataset, InputExample, convert_examples_to_features
 
@@ -110,7 +110,7 @@ class QuestModel:
             "roberta": (RobertaConfig, RobertaForSequenceClassification, RobertaTokenizer),
             "xlnet": (XLNetConfig, XLNetForSequenceClassification, XLNetTokenizer),
             "xlm": (XLMConfig, XLMForSequenceClassification, XLMTokenizer),
-            "xlmroberta": (XLMRobertaConfig, XLMRobertaForSequenceClassification, XLMRobertaTokenizer),
+            "xlmroberta": (XLMRobertaConfig, XLMRobertaModel, XLMRobertaTokenizer),
         }
 
         self.args = self._load_model_args(model_name)
